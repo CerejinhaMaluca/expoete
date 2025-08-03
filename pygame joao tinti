@@ -1,0 +1,201 @@
+#coloquei em  comentários o que eu nn estava usando e alguns códigos que ele colocou no curso
+
+
+
+
+
+
+import pygame
+
+from pygame.locals import *
+from sys import exit 
+from random import randint
+
+pygame.init()
+
+pygame.mixer.music.set_volume(0.2)
+
+msc_fundo = pygame.mixer.music.load('backtrack.wav')
+
+coli = pygame.mixer.Sound('smw_coin.wav')
+coli.set_volume(0.5)
+
+
+pygame.mixer.music.play(-1)
+a = 640 
+l = 480
+tela = pygame.display.set_mode((a, l))
+x_snake= int (l/2)
+y_snake = int (a/2)
+
+x_apple = randint(40, 600)
+y_apple= randint(50, 430)
+
+speed = 3.5
+
+x_controle = 20
+y_controle = 0
+
+die = False
+
+
+
+fonte = pygame.font.SysFont('arial', 40, False, True)
+pontos = 0 
+
+lista2 = []
+
+comprimento_cobra = 5 
+
+pygame.display.set_caption('joguin')
+cframey = pygame.time.Clock() 
+cframex = pygame.time.Clock()
+
+def cobra (lista2):
+    for XeY in lista2:
+      #XeY = [x, y]
+      #XeY[0] = x
+      # XeY[1] = y   
+     
+     pygame.draw.rect(tela, (0, 255, 0), (XeY[0], XeY[1], 20, 20))
+
+
+def reiniciar_jogo():
+   global pontos, x_snake, y_snake, x_apple, y_apple, die, comprimento_cobra, lista1, lista2
+   x_snake = int (l/2)
+   y_snake = int (a/2)
+   x_apple = randint(40, 600)
+   y_apple= randint(50, 430)
+   die = False
+   comprimento_cobra = 5 
+   lista1 = []
+   lista2 = []
+   pontos = 0
+
+
+while True:
+    cframey.tick(60)
+    tela.fill((255, 255, 255)) 
+    msg = f'Pontos: {pontos}'
+    texto_for = fonte.render(msg, True, (0, 0, 0))
+    for event in pygame.event.get():
+         if event.type == QUIT: 
+            pygame.quit()
+            exit()
+         
+         '''if event.type == KEYDOWN:
+         
+          if event.key == K_a:
+              if x_controle == speed:
+                  pass
+              else: 
+                x_controle = - speed
+                y_controle = 0
+          if event.key == K_d:
+              if x_controle == speed:
+                pass
+              else:
+                x_controle = speed
+                y_controle = 0
+          if event.key == K_w:
+               if y_controle == speed:
+                   pass
+               else:
+                y_controle =  - speed
+                x_controle = 0 
+          if event.key == K_s:
+               if y_controle == speed:
+                   pass
+               else:
+                y_controle = speed
+                x_controle = 0 '''
+    '''     
+    if pygame.key.get_pressed()[K_a]:
+        x_snake = x_snake - 10 
+
+    if pygame.key.get_pressed()[K_d]:
+        x_snake = x_snake + 10
+    
+    if pygame.key.get_pressed()[K_w]:
+        y_snake = y_snake - 10 
+
+    if pygame.key.get_pressed()[K_s]:
+        y_snake = y_snake + 10'''
+
+
+    '''x_snake = x_snake + x_controle
+    y_snake = y_snake + y_controle'''
+    snake = pygame.draw.rect(tela, (0,255,0), (x_snake, y_snake, 20, 20))
+    
+    apple = pygame.draw.rect(tela, (255, 0, 0), (x_apple, y_apple, 20, 20))
+    
+   
+
+    if snake.colliderect(apple):
+       x_apple = randint (40, 600)
+       y_apple = randint(50, 430)
+       pontos = pontos + 1 
+       coli.play()
+       comprimento_cobra = comprimento_cobra + 1 
+
+    lista1 = []
+    lista1.append(x_snake)
+    lista1.append(y_snake)
+
+    if die:
+     msg_morte = fonte.render('Você morreu! Pressione R para reiniciar', True, (255, 0, 0))
+     tela.blit(msg_morte, (50, 50))  
+     pygame.display.update()
+
+    for event in pygame.event.get():
+     if event.type == QUIT:
+        pygame.quit()
+        exit()
+
+    if event.type == KEYDOWN:
+        if event.key == K_r:
+            reiniciar_jogo()
+
+        if not die:
+            if event.key == K_a and x_controle != speed:
+                x_controle = -speed
+                y_controle = 0
+            if event.key == K_d and x_controle != -speed:
+                x_controle = speed
+                y_controle = 0
+            if event.key == K_w and y_controle != speed:
+                y_controle = -speed
+                x_controle = 0
+            if event.key == K_s and y_controle != -speed:
+                y_controle = speed
+                x_controle = 0
+    
+    
+    if [x_snake, y_snake] in lista2[:-1]:
+     die = True
+
+    if not die:
+     x_snake += x_controle
+     y_snake += y_controle              
+                   
+                   
+                   
+                  
+          
+       
+   
+    if x_snake < 0 or x_snake > a or y_snake < 0 or y_snake > l:
+        die = True
+
+
+
+    
+    lista2.append([x_snake, y_snake])
+    if len(lista2) > comprimento_cobra:
+        del lista2[0]
+    cobra(lista2)
+
+
+    tela.blit(texto_for, (450, 40))
+    
+    pygame.display.update()
